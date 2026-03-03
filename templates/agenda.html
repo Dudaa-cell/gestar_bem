@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>GestarBem • Agenda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #ffe9ef;
+      --neutral: #faf7f3;
+      --white: #ffffff;
+      --text: #111111;
+      --muted: rgba(17, 17, 17, 0.65);
+      --radius: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--neutral);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .top-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9998;
+      padding: 18px 40px;
+      background: transparent;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      background: rgba(255, 233, 239, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-mini {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--text);
+      opacity: 0.9;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-square {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 2px;
+      background: var(--primary);
+      color: #000;
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      font-weight: 500;
+      min-width: 110px;
+      transition: 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-square:hover {
+      filter: brightness(0.98);
+      transform: translateY(-1px);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      padding-top: 130px;
+    }
+
+    .title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .cal-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .cal-arrow {
+      width: 44px;
+      height: 44px;
+      border-radius: 2px;
+      background: var(--primary);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    .cal-arrow:hover {
+      filter: brightness(.98);
+      transform: translateY(-1px);
+    }
+
+    .month-btn {
+      background: var(--primary);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      padding: 12px 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 15px;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s ease;
+      flex: 1;
+      min-height: 44px;
+    }
+
+    .month-btn:hover {
+      filter: brightness(.98);
+      transform: translateY(-1px);
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .day {
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px;
+      min-height: 70px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      border: 1px solid rgba(17, 17, 17, 0.10);
+      outline: none;
+    }
+
+    .day:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.99);
+    }
+
+    .day.has-event {
+      background: var(--primary);
+    }
+
+    .day.is-selected {
+      border: 1px solid rgba(17, 17, 17, 0.28);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .day span {
+      font-size: 12px;
+      opacity: 0.6;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .events {
+      background: #fff;
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(17, 17, 17, 0.10);
+    }
+
+    .events-header {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .event {
+      padding: 10px 10px;
+      border-radius: 10px;
+      background: rgba(255, 233, 239, 0.28);
+      border: 1px solid rgba(17, 17, 17, 0.08);
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .event small {
+      display: block;
+      opacity: 0.7;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    button.action {
+      background: var(--primary);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      padding: 14px;
+      width: 100%;
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s ease;
+    }
+
+    button.action:hover {
+      filter: brightness(0.98);
+      transform: translateY(-1px);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.18);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9997;
+      padding: 18px;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .picker {
+      width: min(420px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(17, 17, 17, 0.10);
+      border-radius: var(--radius);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .picker h2 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .picker p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .picker-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 6px;
+      opacity: .85;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 2px;
+      border: 1px solid rgba(17, 17, 17, .18);
+      background: rgba(255, 255, 255, .9);
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .year-control {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .year-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 2px;
+      background: var(--primary);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      cursor: pointer;
+      transition: .2s ease;
+      font-weight: 500;
+    }
+
+    .year-btn:hover {
+      filter: brightness(.98);
+      transform: translateY(-1px);
+    }
+
+    .year-value {
+      text-align: center;
+      font-size: 14px;
+      padding: 12px 10px;
+      border-radius: 2px;
+      border: 1px solid rgba(17, 17, 17, .10);
+      background: rgba(255, 255, 255, .9);
+    }
+
+    .picker-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .btn-lite {
+      padding: 12px 18px;
+      border-radius: 2px;
+      border: 1px solid rgba(17, 17, 17, .12);
+      background: rgba(255, 255, 255, .9);
+      cursor: pointer;
+      font-weight: 500;
+      transition: .2s ease;
+    }
+
+    .btn-lite:hover {
+      filter: brightness(.99);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      padding: 12px 18px;
+      border-radius: 2px;
+      border: 1px solid rgba(17, 17, 17, .12);
+      background: var(--primary);
+      cursor: pointer;
+      font-weight: 500;
+      transition: .2s ease;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(.98);
+      transform: translateY(-1px);
+    }
+
+    .overlay-consult {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.18);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9996;
+      padding: 18px;
+    }
+
+    .overlay-consult.show {
+      display: flex;
+    }
+
+    .consult-modal {
+      width: min(520px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(17, 17, 17, 0.10);
+      border-radius: var(--radius);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .consult-modal h2 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .consult-modal p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 2px;
+      border: 1px solid rgba(17, 17, 17, .18);
+      background: rgba(255, 255, 255, .9);
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+
+    textarea.input {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 920px) {
+      header {
+        padding: 18px 18px;
+      }
+
+      .container {
+        padding: 20px;
+        padding-top: 130px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-line"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand-mini">GestarBem</div>
+
+      <nav>
+        <div class="nav-actions">
+          <a class="btn-square" href="/home">Voltar</a>
+          <a class="btn-square" href="/">Sair</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="title">Minha agenda</div>
+
+    <div class="cal-top">
+      <button class="cal-arrow" type="button" id="prevMonth" aria-label="Mês anterior">‹</button>
+
+      <button class="month-btn" type="button" id="openPicker" aria-label="Escolher mês e ano">
+        <span id="mesAno"></span>
+      </button>
+
+      <button class="cal-arrow" type="button" id="nextMonth" aria-label="Próximo mês">›</button>
+    </div>
+
+    <div class="weekdays">
+      <div>SEG</div>
+      <div>TER</div>
+      <div>QUA</div>
+      <div>QUI</div>
+      <div>SEX</div>
+      <div>SÁB</div>
+      <div>DOM</div>
+    </div>
+
+    <div class="calendar" id="calendar"></div>
+
+    <div class="events" id="events">
+      <em>Selecione um dia para ver seus compromissos</em>
+    </div>
+
+    <button class="action" type="button" id="openConsultBtn">Marcar consulta</button>
+
+  </main>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="picker">
+      <h2>Escolher mês e ano</h2>
+      <p>Você pode navegar com calma entre meses e anos.</p>
+
+      <div class="picker-row">
+        <div class="field">
+          <label>MÊS</label>
+          <select id="pickMonth"></select>
+        </div>
+
+        <div class="field">
+          <label>ANO</label>
+          <div class="year-control">
+            <button class="year-btn" type="button" id="yearDown">−</button>
+            <div class="year-value" id="pickYearText"></div>
+            <button class="year-btn" type="button" id="yearUp">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="picker-actions">
+        <button class="btn-lite" type="button" id="cancelPicker">Cancelar</button>
+        <button class="btn-primary" type="button" id="applyPicker">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay-consult" id="consultOverlay" role="dialog" aria-modal="true">
+    <div class="consult-modal">
+      <h2>Marcar consulta</h2>
+      <p>Preencha com calma — você pode editar depois.</p>
+
+      <div class="form-grid">
+        <div class="full">
+          <label>Título </label>
+          <input class="input" id="cTitulo" type="text" placeholder="Ex: Pré-natal">
+        </div>
+
+        <div>
+          <label>Data </label>
+          <input class="input" id="cData" type="date">
+        </div>
+
+        <div>
+          <label>Horário </label>
+          <input class="input" id="cHora" type="time">
+        </div>
+
+        <div class="full">
+          <label>Local</label>
+          <input class="input" id="cLocal" type="text" placeholder="Ex: Clínica / Hospital">
+        </div>
+
+        <div class="full">
+          <label>Observação</label>
+          <textarea class="input" id="cObs" placeholder="Ex: levar exames anteriores"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-lite" type="button" id="cancelConsult">Cancelar</button>
+        <button class="btn-primary" type="button" id="saveConsult">Salvar consulta</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let dataAtual = new Date();
+    let mes = dataAtual.getMonth();
+    let ano = dataAtual.getFullYear();
+
+    const meses = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    const mesAnoEl = document.getElementById("mesAno");
+    const calEl = document.getElementById("calendar");
+    const eventsEl = document.getElementById("events");
+
+    const prevBtn = document.getElementById("prevMonth");
+    const nextBtn = document.getElementById("nextMonth");
+    const openPickerBtn = document.getElementById("openPicker");
+
+    const overlay = document.getElementById("overlay");
+    const pickMonth = document.getElementById("pickMonth");
+    const pickYearText = document.getElementById("pickYearText");
+    const yearDown = document.getElementById("yearDown");
+    const yearUp = document.getElementById("yearUp");
+    const cancelPicker = document.getElementById("cancelPicker");
+    const applyPicker = document.getElementById("applyPicker");
+
+    const consultOverlay = document.getElementById("consultOverlay");
+    const openConsultBtn = document.getElementById("openConsultBtn");
+    const cancelConsult = document.getElementById("cancelConsult");
+    const saveConsult = document.getElementById("saveConsult");
+
+    const cTitulo = document.getElementById("cTitulo");
+    const cData = document.getElementById("cData");
+    const cHora = document.getElementById("cHora");
+    const cLocal = document.getElementById("cLocal");
+    const cObs = document.getElementById("cObs");
+
+    let tempMonth = mes;
+    let tempYear = ano;
+
+    let selectedKey = null;
+    let selectedDayNumber = null;
+
+    function pad2(n) { return String(n).padStart(2, "0"); }
+
+    function makeKey(y, m, d) {
+      return `${y}-${pad2(m + 1)}-${pad2(d)}`;
+    }
+
+    function labelMesAno(m, y) {
+      return `${meses[m]} ${y}`;
+    }
+
+    function getEventsByKey(key) {
+      return JSON.parse(localStorage.getItem(key) || "[]");
+    }
+
+    function setEventsByKey(key, arr) {
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    function clearSelectedUI() {
+      const days = calEl.querySelectorAll(".day");
+      days.forEach(d => d.classList.remove("is-selected"));
+    }
+
+    function render() {
+      mesAnoEl.innerText = labelMesAno(mes, ano);
+      calEl.innerHTML = "";
+
+      const primeiroDia = new Date(ano, mes, 1).getDay();
+      const totalDias = new Date(ano, mes + 1, 0).getDate();
+      const blanks = (primeiroDia === 0) ? 6 : (primeiroDia - 1);
+
+      for (let i = 0; i < blanks; i++) {
+        calEl.innerHTML += `<div></div>`;
+      }
+
+      for (let d = 1; d <= totalDias; d++) {
+        const key = makeKey(ano, mes, d);
+        const eventos = getEventsByKey(key);
+
+        const div = document.createElement("div");
+        div.className = "day" + (eventos.length ? " has-event" : "");
+        div.innerHTML = `<strong>${d}</strong><br><span>${eventos[0]?.titulo || ""}</span>`;
+
+        div.addEventListener("click", () => {
+          selectedKey = key;
+          selectedDayNumber = d;
+
+          clearSelectedUI();
+          div.classList.add("is-selected");
+
+          mostrarEventos(key, d);
+        });
+
+        calEl.appendChild(div);
+      }
+
+      if (selectedKey) {
+        const [y, mm, dd] = selectedKey.split("-").map(Number);
+        if (y === ano && (mm - 1) === mes) {
+          const all = calEl.querySelectorAll(".day");
+          all.forEach(node => {
+            const strong = node.querySelector("strong");
+            if (strong && Number(strong.textContent) === dd) {
+              node.classList.add("is-selected");
+            }
+          });
+          mostrarEventos(selectedKey, dd);
+        } else {
+          selectedKey = null;
+          selectedDayNumber = null;
+          eventsEl.innerHTML = `<em>Selecione um dia para ver seus compromissos</em>`;
+        }
+      }
+    }
+
+    function mostrarEventos(key, dia) {
+      const eventos = getEventsByKey(key);
+
+      if (!eventos.length) {
+        eventsEl.innerHTML = `
+          <div class="events-header">Compromissos do dia ${dia}</div>
+          <em>Nenhum compromisso para este dia</em>
+        `;
+        return;
+      }
+
+      const header = `<div class="events-header">Compromissos do dia ${dia}</div>`;
+      const list = eventos.map(e => {
+        const local = e.local ? `<small><strong>Local:</strong> ${escapeHtml(e.local)}</small>` : "";
+        const obs = e.obs ? `<small><strong>Obs:</strong> ${escapeHtml(e.obs)}</small>` : "";
+        return `
+          <div class="event">
+            <strong>${escapeHtml(e.hora)} • ${escapeHtml(e.titulo)}</strong>
+            ${local}
+            ${obs}
+          </div>
+        `;
+      }).join("");
+
+      eventsEl.innerHTML = header + list;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[m]));
+    }
+
+    function prevMonth() {
+      mes--;
+      if (mes < 0) { mes = 11; ano--; }
+      render();
+    }
+
+    function nextMonth() {
+      mes++;
+      if (mes > 11) { mes = 0; ano++; }
+      render();
+    }
+
+    prevBtn.addEventListener("click", prevMonth);
+    nextBtn.addEventListener("click", nextMonth);
+
+    function buildMonthOptions() {
+      pickMonth.innerHTML = "";
+      meses.forEach((nome, idx) => {
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        opt.textContent = nome;
+        pickMonth.appendChild(opt);
+      });
+    }
+
+    function openPicker() {
+      tempMonth = mes;
+      tempYear = ano;
+
+      pickMonth.value = String(tempMonth);
+      pickYearText.textContent = String(tempYear);
+
+      overlay.classList.add("show");
+    }
+
+    function closePicker() {
+      overlay.classList.remove("show");
+    }
+
+    function applyPickerChanges() {
+      mes = tempMonth;
+      ano = tempYear;
+      closePicker();
+      render();
+    }
+
+    openPickerBtn.addEventListener("click", openPicker);
+    cancelPicker.addEventListener("click", closePicker);
+    applyPicker.addEventListener("click", applyPickerChanges);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closePicker();
+    });
+
+    pickMonth.addEventListener("change", () => {
+      tempMonth = Number(pickMonth.value);
+    });
+
+    yearDown.addEventListener("click", () => {
+      tempYear -= 1;
+      pickYearText.textContent = String(tempYear);
+    });
+
+    yearUp.addEventListener("click", () => {
+      tempYear += 1;
+      pickYearText.textContent = String(tempYear);
+    });
+
+    function openConsultModal() {
+      if (selectedKey) cData.value = selectedKey;
+      else cData.value = "";
+
+      cTitulo.value = "";
+      cHora.value = "";
+      cLocal.value = "";
+      cObs.value = "";
+
+      consultOverlay.classList.add("show");
+      cTitulo.focus();
+    }
+
+    function closeConsultModal() {
+      consultOverlay.classList.remove("show");
+    }
+
+    function saveConsultation() {
+      const titulo = cTitulo.value.trim();
+      const data = cData.value;
+      const hora = cHora.value;
+
+      if (!titulo || !data || !hora) {
+        return;
+      }
+
+      const key = data;
+      const eventos = getEventsByKey(key);
+
+      eventos.push({
+        titulo,
+        data,
+        hora,
+        local: cLocal.value.trim(),
+        obs: cObs.value.trim()
+      });
+
+      setEventsByKey(key, eventos);
+
+      selectedKey = key;
+      selectedDayNumber = Number(key.split("-")[2]);
+
+      closeConsultModal();
+      render();
+
+      const [y, mm, dd] = key.split("-").map(Number);
+      if (y === ano && (mm - 1) === mes) {
+        mostrarEventos(key, dd);
+      } else {
+        eventsEl.innerHTML = `<em>Consulta salva. Abra o mês correspondente para visualizar.</em>`;
+      }
+    }
+
+    openConsultBtn.addEventListener("click", openConsultModal);
+    cancelConsult.addEventListener("click", closeConsultModal);
+    saveConsult.addEventListener("click", saveConsultation);
+
+    consultOverlay.addEventListener("click", (e) => {
+      if (e.target === consultOverlay) closeConsultModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+
+      if (consultOverlay.classList.contains("show")) {
+        closeConsultModal();
+        return;
+      }
+
+      if (overlay.classList.contains("show")) {
+        closePicker();
+        return;
+      }
+    });
+
+    buildMonthOptions();
+    render();
+  </script>
+
+</body>
+
+</html>
